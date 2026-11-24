@@ -11,6 +11,8 @@
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){ --bg:#15191F; --panel:#1E242C; --ink:#EEF1F4; --muted:#A5AEB8; --line:#333B45; --accent:#6FB0CF; --accent-ink:#0F1A22; --warm:#E59A5E; --soft:#262D36; --phone:#0B0F14; --phone-fg:#F9FAFB; --ok:#7BC79A; --bad:#E58C7C; color-scheme:dark } }
 :root[data-theme="dark"]{ --bg:#15191F; --panel:#1E242C; --ink:#EEF1F4; --muted:#A5AEB8; --line:#333B45; --accent:#6FB0CF; --accent-ink:#0F1A22; --warm:#E59A5E; --soft:#262D36; --phone:#0B0F14; --phone-fg:#F9FAFB; --ok:#7BC79A; --bad:#E58C7C; color-scheme:dark }
 *{box-sizing:border-box}
+[hidden]{display:none!important}
+.top .row{align-items:center}
 body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.5;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 32px;margin:0}
 h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
@@ -76,7 +78,7 @@ textarea{min-height:90px}
 </style>
 
 </head><body><div class="top">
-  <div><h1>Hub 1204 情境題施測</h1><div class="tag">測試版 · 12/4 前後測 · 學生持平板唸題、長者口頭作答</div></div>
+  <div><h1>Hub 1204 情境題施測</h1><div class="tag">12/4 前後測 · 輸入代號自動分派 A／B 卷 · 學生持平板唸題、長者口頭作答</div></div>
   <div class="row" style="gap:8px"><span id="sessPill" class="pill" hidden></span><button class="ghost" id="btnAdmin" type="button">紀錄與匯出</button></div>
 </div>
 
@@ -91,11 +93,11 @@ const ITEMS={
  A1:{t:"您加入一個 LINE 股票群組，裡面的「老師」每天報明牌，幾十位群友都貼出賺錢的截圖，還說名額只剩最後十個。老師的助理私訊您，說只要下載投資 App、先匯 5 萬元進去，保證每月賺一成。",card:{k:"line",title:"飆股 VIP 群（86）",msgs:["老師：今天這檔又漲停！","群友 A：跟單賺 3 萬 📷","群友 B：謝謝老師！📷","助理：名額只剩 10 個，下載 App 先匯 5 萬，保證每月 10%"]}},
  A2:{t:"社區據點辦理財講座，是郵局派人來講定存和儲蓄險，現場有二十多位鄰居一起聽。講完郵局人員說，有興趣的人請自己帶存摺和印章到郵局櫃台辦，不急，回去跟家人商量過再來。",card:{k:"scene",title:"社區據點 · 理財講座",lines:["主講：郵局人員","現場：二十多位鄰居","「要辦請帶存摺印章到郵局櫃台，不急」"]}},
  A3:{t:"有人打電話來說他是地檢署的檢察官，說您的帳戶被詐騙集團拿去洗錢，現在要立刻處理。為了證明您是清白的，要您把存款領出來交給他們派來的專員保管，而且案件偵查中，不能告訴家人。",card:{k:"call",name:"(03) 3xxx-xxxx",sub:"市話"}},
- A4:{t:"派出所的警員打電話來，說您上個月報案的機車失竊案有進展，車子找到了。他報了姓名和單位，請您這幾天方便的時候，帶身分證和行照到派出所領回；如果不放心，可以先打派出所的電話確認。",card:{k:"call",name:"(03) 3xxx-xxxx",sub:"市話"}},
+ A4:{t:"派出所的警員打電話來，說您之前報案的機車失竊案有進展，車子找到了。他報了姓名和單位，請您這幾天方便的時候，帶身分證和行照到派出所領回；如果不放心，可以先打派出所的電話確認。",card:{k:"call",name:"(03) 3xxx-xxxx",sub:"市話"}},
  A5:{t:"電話那頭說：「猜猜我是誰？」您說：「是阿明嗎？」對方說：「對啦！我換新號碼了，你記一下。」隔天他又打來，說做生意急需週轉 10 萬元，今天就要，請您先匯到他朋友的帳戶。",card:{k:"call",name:"09xx-xxx-xxx",sub:"行動電話"}},
  A6:{t:"孫子用他平常的手機號碼打來，說下學期註冊費不太夠，問您能不能幫忙一部分。他說不急，會先跟爸媽商量，週末回家再當面跟您談，到時候再決定怎麼給。",q3:"週末跟他當面談這件事，您會照著做嗎？",card:{k:"call",name:"09xx-xxx-xxx",sub:"行動電話"}},
- A7:{t:"您上個月在購物網站買過東西。有人打電話來說是那家網站的客服，說出您買的商品和金額，說工作人員誤把您設成分期付款，每個月都會被扣款，要您現在到 ATM 照他的指示操作才能取消。",card:{k:"call",name:"(03) 3xxx-xxxx",sub:"市話"}},
- A8:{t:"您上個月自己在銀行辦了一筆三期的分期付款。這個月信用卡帳單寄來，上面列出第一期的金額，跟當時約定的一樣，繳款期限在月底。帳單上沒有電話叫您操作什麼，只印了銀行官方客服。",q3:"您會照著繳這一期嗎？",card:{k:"bill",title:"信用卡帳單",lines:["分期付款 第 1 期／共 3 期","本期應繳：與約定相同","繳款期限：本月底","客服電話：卡片背面"]}},
+ A7:{t:"您之前在網站買過東西。有人打電話來說是那家網站的客服，說出您買的商品和金額，說工作人員誤把您設成分期付款，每個月都會被扣款，要您現在到 ATM 照他的指示操作才能取消。",card:{k:"call",name:"(03) 3xxx-xxxx",sub:"市話"}},
+ A8:{t:"您之前自己在銀行辦了一筆三期的分期付款。這個月信用卡帳單寄來，上面列出第一期的金額，跟當時約定的一樣，繳款期限在月底。帳單上沒有電話叫您操作什麼，只印了銀行官方客服。",q3:"您會照著繳這一期嗎？",card:{k:"bill",title:"信用卡帳單",lines:["分期付款 第 1 期／共 3 期","本期應繳：與約定相同","繳款期限：本月底","客服電話：卡片背面"]}},
  A9:{t:"您在臉書認識一位自稱在國外工作的醫生，聊了兩個月很投緣，他每天都傳早安問候。他說寄了一份貴重禮物給您，但海關要先付 3 萬元關稅才能領，請您先幫忙墊，他回國就還您。",card:{k:"line",title:"Messenger · Dr. 外國醫生",msgs:["早安，今天也要開心 ☀️","我寄了一份禮物給妳","海關說要先付 3 萬關稅才能領","可以先幫我墊嗎？回國就還妳"]}},
  A10:{t:"社區據點的志工打電話邀請您參加下週的健康講座，說現場可以免費量血壓、量骨密度，不用帶錢、不用報名費，也不用提供身分證字號，直接到據點就好；志工是您在據點見過的人。",card:{k:"call",name:"09xx-xxx-xxx",sub:"行動電話"}},
  B1:{t:"您在 YouTube 看到一支影片，一位常上電視的財經名師親自說：「這個投資平台我自己也在用，我掛保證。」影片下方有連結加 LINE 客服，客服說現在開戶、先匯 5 萬元，每月穩賺一成。",card:{k:"video",title:"財經名師：我掛保證的平台",cap:"👉 點此加 LINE 客服開戶"}},
@@ -105,7 +107,7 @@ const ITEMS={
  B5:{t:"女兒的 LINE 傳訊息來，說她手機壞了，先用這個帳號聯絡。她說公司急著要一筆 3 萬元，請您先轉帳到一個帳戶，晚上就還您；還說她正在開會，先不要打電話給她，用 LINE 回就好。",card:{k:"line",title:"女兒（新帳號）",msgs:["媽，我手機壞了，先用這個聯絡","公司急著要 3 萬，先幫我轉到這個帳戶","晚上就還妳","我在開會，不要打電話，LINE 回我就好"]}},
  B6:{t:"妹妹在 LINE 上傳訊息說她下週要來看您，問您需不需要她順便帶什麼東西。您打她平常的電話號碼，她親口說訊息是她傳的，還聊了幾句家常。她沒有提到錢的事。",q3:"您會回覆她需要帶的東西嗎？",card:{k:"line",title:"妹妹",msgs:["姊，我下週去看妳","要我順便帶什麼嗎？","（您打她平常的號碼，她親口確認）"]}},
  B7:{t:"有人打電話來說是您信用卡銀行的客服，說出您的姓名和最近一筆消費，說系統出錯把這筆消費重複扣款兩次，要在今天下午五點前處理。他要您打開網路銀行，照他唸的步驟一步一步操作才能退款。",card:{k:"call",name:"(03) 3xxx-xxxx",sub:"市話"}},
- B8:{t:"您上個月自己在家電行刷卡買冷氣，當場辦了六期分期。這個月信用卡帳單寄來，列出第一期的金額，跟店員當時說的一樣，繳款期限在月底。帳單上只印了銀行的官方客服電話，沒有叫您去操作什麼。",q3:"您會照著繳這一期嗎？",card:{k:"bill",title:"信用卡帳單",lines:["冷氣 分期付款 第 1 期／共 6 期","本期應繳：與店員所說相同","繳款期限：本月底","客服電話：銀行官方"]}},
+ B8:{t:"您之前自己在家電行刷卡買家電，當場辦了六期分期。這個月信用卡帳單寄來，列出第一期的金額，跟店員當時說的一樣，繳款期限在月底。帳單上只印了銀行的官方客服電話，沒有叫您去操作什麼。",q3:"您會照著繳這一期嗎？",card:{k:"bill",title:"信用卡帳單",lines:["家電 分期付款 第 1 期／共 6 期","本期應繳：與店員所說相同","繳款期限：本月底","客服電話：銀行官方"]}},
  B9:{t:"交友 App 上認識的對象每天跟您說早安、晚安，說很想來台灣見您，但手頭不方便買機票，請您先匯 2 萬元，到台灣就還您。他說如果您不幫忙，他會覺得您不在乎這段感情。",card:{k:"line",title:"交友 App · 他",msgs:["早安 ❤️ 晚安 🌙","好想去台灣見妳","機票錢不方便，先匯 2 萬給我好嗎","不幫我，就是不在乎我們"]}},
  B10:{t:"多年不見的老同學透過您兒子問到您的電話，打來約您下週在老家附近的廟口喝茶敘舊。他說就是聊聊天，不用帶什麼東西，也沒有別的事要拜託您；您兒子確認是他本人。",q3:"您會赴約嗎？",card:{k:"call",name:"09xx-xxx-xxx",sub:"行動電話"}},
 };
@@ -113,14 +115,84 @@ const SIM={
  pre:{from:"宅配通知",text:"【宅配】您的包裹地址有誤，無法配送，請於今日點選連結更新資料：",link:"http://tw-delivery-update.xyz/a8k2"},
  post:{from:"台電繳費",text:"【台電】您的電費逾期未繳，今日將停電，請立即點選連結繳費：",link:"http://taipower-pay-now.top/9f1c"}
 };
-/* 測試名單：T01–T25，單號 A→B，雙號 B→A。正式名單由老師提供後替換。 */
-const ROSTER={}; for(let i=1;i<=25;i++){const c="T"+String(i).padStart(2,"0"); ROSTER[c]= i%2 ? "AB" : "BA";}
+/* ==========================================================
+   後台設定：部署 Google Apps Script 後，把網址貼在 ENDPOINT。
+   TOKEN 要和 Apps Script 裡的 TOKEN 一樣。
+   ENDPOINT 留空＝只存在這台平板（離線測試用）。
+   ========================================================== */
+const CONFIG={
+  ENDPOINT:"貼上剛剛的 /exec 網址",
+  TOKEN:"和 Code.gs 一樣的 TOKEN"
+};
+/* 卷別分派規則：
+   1) 試算表「roster」分頁有寫的代號，照那裡（AB 或 BA）。
+   2) 否則看代號最後的數字：單號 前測 A→後測 B；雙號 前測 B→後測 A。
+   3) 後測一律是「前測卷的另一卷」，不管上面規則。 */
+function parityAssign(code){ const m=code.match(/(\d+)\D*$/); if(!m) return null; return (+m[1])%2 ? "AB" : "BA"; }
+const other=f=>f==="A"?"B":"A";
 
-/* ---------- 儲存 ---------- */
+/* ---------- 本機儲存（備份與離線） ---------- */
 const KEY="hub1204_records_v1";
 function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(e){ return []; } }
 function save(list){ try{ localStorage.setItem(KEY,JSON.stringify(list)); }catch(e){} }
-function phaseFor(code){ const done=load().filter(r=>r.code===code&&r.finished).map(r=>r.phase); if(!done.includes("pre")) return "pre"; if(!done.includes("post")) return "post"; return "done"; }
+function rid(){ return "r"+Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+
+/* ---------- 後台連線 ---------- */
+async function remoteStatus(code){
+  if(!CONFIG.ENDPOINT) return null;
+  const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),9000);
+  try{
+    const url=CONFIG.ENDPOINT+"?action=status&token="+encodeURIComponent(CONFIG.TOKEN)+"&code="+encodeURIComponent(code);
+    const r=await fetch(url,{signal:ctl.signal}); const j=await r.json();
+    return j&&j.ok ? j : null;
+  }catch(e){ return null; } finally{ clearTimeout(t); }
+}
+async function upload(rec){
+  if(!CONFIG.ENDPOINT) return false;
+  const ctl=new AbortController(); const t=setTimeout(()=>ctl.abort(),20000);
+  try{
+    const r=await fetch(CONFIG.ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({token:CONFIG.TOKEN,record:rec}),signal:ctl.signal});
+    const j=await r.json(); return !!(j&&j.ok);
+  }catch(e){ return false; } finally{ clearTimeout(t); }
+}
+async function retryPending(){
+  const list=load(); let n=0;
+  for(const r of list){ if(r.finished&&!r.uploaded){ if(await upload(r)){ r.uploaded=true; n++; } } }
+  save(list); return n;
+}
+/* 逐題送出進度（不等待、不阻擋畫面；失敗時完成後的整筆上傳會補齊） */
+const CUR="hub1204_current_v1";
+function saveCur(){ try{ if(S) localStorage.setItem(CUR,JSON.stringify(S)); }catch(e){} }
+function loadCur(){ try{ const c=JSON.parse(localStorage.getItem(CUR)||"null"); return c&&!c.finished?c:null; }catch(e){ return null; } }
+function clearCur(){ try{ localStorage.removeItem(CUR); }catch(e){} }
+function progress(stage,answer){
+  if(!S) return; S.where=stage; saveCur();
+  if(!CONFIG.ENDPOINT) return;
+  const body={token:CONFIG.TOKEN,type:"progress",rid:S.rid,code:S.code,phase:S.phase,form:S.form,assign:S.assign,start:S.start,stage:stage,answer:answer||null};
+  try{ fetch(CONFIG.ENDPOINT,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(body),keepalive:true}).catch(()=>{}); }catch(e){}
+}
+function resumeCur(){
+  const c=loadCur(); if(!c) return; S=c;
+  sessPill.textContent=`${S.code} · ${S.phase==="pre"?"前測":"後測"} · ${S.form} 卷`; sessPill.hidden=false;
+  if(S.where==="sim") screenSim(); else if(S.where==="end") (S.phase==="pre"?screenSafety():screenAccept());
+  else if(S.where==="intro") screenIntro(); else screenItem(Math.min(S.step||0,9));
+}
+
+/* 決定這次是前測或後測、用哪一卷 */
+async function resolveCode(code){
+  const local=load().filter(r=>r.code===code&&r.finished).map(r=>({phase:r.phase,form:r.form}));
+  const rs=await remoteStatus(code);
+  const done=local.slice();
+  if(rs&&Array.isArray(rs.done)) rs.done.forEach(d=>{ if(!done.some(x=>x.phase===d.phase)) done.push(d); });
+  const pre=done.find(d=>d.phase==="pre"), post=done.find(d=>d.phase==="post");
+  const rosterAssign = rs&&/^(AB|BA)$/.test(rs.assign||"") ? rs.assign : null;
+  const assign = rosterAssign || parityAssign(code);
+  const res={code,online:!!rs,configured:!!CONFIG.ENDPOINT,assignSource: rosterAssign?"名單":"代號單雙號"};
+  if(post&&pre){ res.phase="done"; res.preForm=pre.form; res.postForm=post.form; return res; }
+  if(pre){ res.phase="post"; res.form=other(pre.form); res.assign=pre.form+res.form; res.assignSource="依前測卷別"; return res; }
+  res.phase="pre"; res.assign=assign; res.form=assign?assign[0]:null; return res;
+}
+
 
 /* ---------- 狀態 ---------- */
 let S=null; // 當前施測
@@ -132,46 +204,80 @@ function esc(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",
 /* ---------- 畫面：開始 ---------- */
 function screenStart(msg){
   sessPill.hidden=true;
+  const pend=load().filter(r=>r.finished&&!r.uploaded).length;
   h(`<div class="panel" style="max-width:720px">
     <h2 style="font-size:24px;margin-bottom:6px">開始施測</h2>
-    <p class="muted">輸入學生編號與長者識別碼。網頁會自動決定卷別（A 或 B）與前測／後測，學生不用選。測試名單：T01–T25。</p>
+    <p class="muted">輸入長者代號。網頁會自動判斷這次是前測還是後測，並跳出對應的卷：前測做 A 卷的人，後測自動是 B 卷；前測做 B 卷的人，後測自動是 A 卷。</p>
     ${msg?`<div class="note" style="margin:10px 0">${esc(msg)}</div>`:""}
-    <div class="grid2" style="margin-top:12px">
-      <div><label for="stu">學生編號</label><input id="stu" inputmode="numeric" placeholder="例如 07" value="${esc(sessionStorage.getItem("stu")||"")}"></div>
-      <div><label for="code">長者識別碼</label><input id="code" placeholder="例如 T03" autocapitalize="characters"></div>
-    </div>
-    <div class="foot"><span class="kbd">識別碼不在名單時會先確認。</span><button class="primary" id="go" type="button">開始</button></div>
+    ${!CONFIG.ENDPOINT?`<div class="note" style="margin:10px 0">⚠ 尚未連接後台：資料只會存在這台平板。</div>`:""}
+    ${(()=>{const c=loadCur(); return c?`<div class="note" style="margin:10px 0;border:2px solid var(--warm)"><b>這台平板有一筆沒做完：${esc(c.code)} ${c.phase==="pre"?"前測":"後測"}（${esc(c.form)} 卷，${c.where==="sim"?"做到模擬操作":c.where==="end"?"做到結尾題":"做到第 "+((c.step||0)+1)+" 題"}）</b><div class="row" style="margin-top:8px"><button class="primary" type="button" id="resume">繼續做完</button><button type="button" id="drop">放棄這筆</button></div></div>`:"";})()}
+    ${pend?`<div class="note" style="margin:10px 0">這台平板有 ${pend} 筆尚未上傳，請到「紀錄與匯出」按「重新上傳」。</div>`:""}
+    <div style="margin-top:12px;max-width:360px"><label for="code">長者代號</label><input id="code" placeholder="例如 H03" autocapitalize="characters" autocomplete="off" style="font-size:28px"></div>
+    <div class="foot"><span class="kbd">下一步會先顯示卷別，確認後才開始。</span><button class="primary" id="go" type="button">下一步</button></div>
   </div>`);
-  document.getElementById("go").onclick=()=>{
-    const stu=document.getElementById("stu").value.trim(); const code=document.getElementById("code").value.trim().toUpperCase();
-    if(!stu||!code){ screenStart("學生編號與識別碼都要填。"); return; }
-    try{ sessionStorage.setItem("stu",stu); }catch(e){}
-    if(!ROSTER[code]){ screenConfirmUnknown(stu,code); return; }
-    beginSession(stu,code,ROSTER[code]);
+  const go=document.getElementById("go");
+  const rs=document.getElementById("resume"); if(rs) rs.onclick=resumeCur;
+  const dp=document.getElementById("drop"); if(dp){ let armed=false; dp.onclick=()=>{ if(!armed){armed=true;dp.textContent="再按一次確認放棄";return;} clearCur(); screenStart(); }; }
+  const run=async()=>{
+    const stu=""; const code=document.getElementById("code").value.trim().toUpperCase().replace(/\s+/g,"");
+    if(!code){ screenStart("請輸入長者代號。"); return; }
+    go.disabled=true; go.textContent= CONFIG.ENDPOINT?"查詢後台中…":"判斷中…";
+    const res=await resolveCode(code);
+    screenConfirm(stu,res);
+  };
+  go.onclick=run;
+  document.getElementById("code").onkeydown=e=>{ if(e.key==="Enter") run(); };
+}
+function screenConfirm(stu,res){
+  const code=res.code;
+  if(res.phase==="done"){ screenStart(`${code} 的前測（${res.preForm} 卷）與後測（${res.postForm} 卷）都已完成。若要重做，請找老師。`); return; }
+  const conn = !res.configured ? `<span class="pill warn">未連接後台</span>` : res.online ? `<span class="pill">✓ 已連線後台</span>` : `<span class="pill warn">後台連不上：只依這台平板的紀錄判斷</span>`;
+  // 無法判斷卷別（代號沒有數字、名單也沒有）
+  if(res.phase==="pre"&&!res.form){
+    h(`<div class="panel" style="max-width:720px"><div class="row" style="justify-content:space-between"><h2 style="font-size:22px">代號 ${esc(code)} 無法自動分派</h2>${conn}</div>
+    <p>代號裡沒有數字，名單也沒有這個代號。請先核對代號；確定沒錯再請老師指定前測卷。</p>
+    <div class="row"><button type="button" id="back">回去修改</button><button type="button" id="fa">前測用 A 卷</button><button type="button" id="fb">前測用 B 卷</button></div></div>`);
+    document.getElementById("back").onclick=()=>screenStart();
+    document.getElementById("fa").onclick=()=>beginSession(stu,code,"pre","A","AB","手動指定");
+    document.getElementById("fb").onclick=()=>beginSession(stu,code,"pre","B","BA","手動指定");
+    return;
+  }
+  const isPre=res.phase==="pre";
+  const warnOffline = isPre && !res.online ? `<div class="note" style="margin-top:12px">⚠ 沒查到這位長者的前測，所以判斷為「前測」。如果他其實已經在別台平板做過前測，請改按下方「已做過前測」，選他前測用的卷。</div>` : "";
+  h(`<div class="panel" style="max-width:760px">
+    <div class="row" style="justify-content:space-between;align-items:center"><span class="muted">請確認</span>${conn}</div>
+    <h2 style="font-size:30px;margin:10px 0 4px">代號 ${esc(code)}</h2>
+    <p style="font-size:26px;margin:6px 0"><b>${isPre?"前測":"後測"}</b> · <b style="color:var(--accent)">${res.form} 卷</b></p>
+    <p class="muted">${isPre?`後測會自動換成 ${other(res.form)} 卷。分派依據：${esc(res.assignSource)}。`:`前測做的是 ${other(res.form)} 卷，所以後測是 ${res.form} 卷。`}</p>
+    ${warnOffline}
+    <div class="foot">
+      <div class="row"><button type="button" id="back">回去修改</button>${isPre?`<button type="button" id="already">已做過前測</button>`:""}</div>
+      <button class="primary" type="button" id="ok">開始${isPre?"前測":"後測"}（${res.form} 卷）</button></div></div>`);
+  document.getElementById("back").onclick=()=>screenStart();
+  document.getElementById("ok").onclick=()=>beginSession(stu,code,res.phase,res.form,res.assign,res.assignSource);
+  if(isPre) document.getElementById("already").onclick=()=>{
+    h(`<div class="panel" style="max-width:720px"><h2 style="font-size:22px">${esc(code)} 前測用的是哪一卷？</h2>
+    <p class="muted">看紙本記錄表或問帶前測的同學。後測會自動用另一卷。</p>
+    <div class="row"><button type="button" id="back2">取消</button><button type="button" id="pa">前測是 A 卷 → 後測 B 卷</button><button type="button" id="pb">前測是 B 卷 → 後測 A 卷</button></div></div>`);
+    document.getElementById("back2").onclick=()=>screenConfirm(stu,res);
+    document.getElementById("pa").onclick=()=>beginSession(stu,code,"post","B","AB","手動：前測 A");
+    document.getElementById("pb").onclick=()=>beginSession(stu,code,"post","A","BA","手動：前測 B");
   };
 }
-function screenConfirmUnknown(stu,code){
-  h(`<div class="panel" style="max-width:720px"><h2 style="font-size:22px">識別碼 ${esc(code)} 不在名單裡</h2>
-  <p>請先核對名單。若確定要用這個識別碼，將以「A→B」分派開始。</p>
-  <div class="row"><button type="button" id="back">回去修改</button><button class="primary" type="button" id="force">仍要開始（A→B）</button></div></div>`);
-  document.getElementById("back").onclick=()=>screenStart();
-  document.getElementById("force").onclick=()=>beginSession(stu,code,"AB");
-}
-function beginSession(stu,code,assign){
-  const phase=phaseFor(code);
-  if(phase==="done"){ screenStart(`${code} 的前測與後測都已完成。若要重做，請到「紀錄與匯出」刪除該筆。`); return; }
-  const form = phase==="pre" ? assign[0] : assign[1];
-  S={stu,code,assign,phase,form,start:new Date().toISOString(),answers:[],sim:null,extra:{},step:0,finished:false};
-  sessPill.textContent=`${code} · ${phase==="pre"?"前測":"後測"} · ${form} 卷 · 學生 ${stu}`; sessPill.hidden=false;
+function beginSession(stu,code,phase,form,assign,assignSource){
+  S={rid:rid(),stu,code,assign,assignSource,phase,form,start:new Date().toISOString(),answers:[],sim:null,extra:{},step:0,finished:false,uploaded:false,ua:navigator.userAgent.slice(0,120)};
+  sessPill.textContent=`${code} · ${phase==="pre"?"前測":"後測"} · ${form} 卷`; sessPill.hidden=false;
+  progress("intro");
   screenIntro();
 }
+
 function screenIntro(){
   h(`<div class="panel" style="max-width:820px">
     <h2 style="font-size:22px;margin-bottom:10px">${S.phase==="pre"?"前測":"後測"}開場（照唸）</h2>
     <p class="scen" style="font-size:22px">「阿公／阿嬤您好，我是長庚大學的學生。等一下我會唸十個生活裡可能遇到的狀況給您聽，每一個我都會問您幾個問題：您覺得這件事是真的還是騙人的、有多確定，還有如果是您，您會不會照著做。這不是考試，沒有對錯，我們只是想知道您平常會怎麼想、怎麼做。您可以用手指螢幕上的答案，也可以直接跟我說。聽不清楚可以叫我再唸一次。我們開始好嗎？」</p>
     <div class="note">提醒：不說「對」「答得好」「這個是騙人的」。長者反問時回答「您覺得呢？照您的想法答就好」。</div>
     <div class="foot"><button type="button" id="quit">取消</button><button class="primary" type="button" id="next">開始第 1 題</button></div></div>`);
-  document.getElementById("quit").onclick=()=>{S=null;screenStart();};
+  document.getElementById("quit").onclick=()=>{S=null;clearCur();screenStart();};
   document.getElementById("next").onclick=()=>screenItem(0);
 }
 
@@ -189,7 +295,7 @@ function progHTML(i,total){ let s=""; for(let k=0;k<total;k++) s+=`<i class="${k
 function screenItem(i){
   const n=ORDER[i], id=S.form+n, it=ITEMS[id];
   const a=S.answers[i]||{id,n,seq:i+1,q1:"",q1c:"",q2:"",follow:"",t0:new Date().toISOString()};
-  S.answers[i]=a;
+  S.answers[i]=a; S.step=i; S.where="item"; saveCur();
   h(`<div class="panel">
     <div class="row" style="justify-content:space-between;align-items:center"><span class="pill">第 ${i+1}／10 題</span><span class="muted">題號 ${esc(id)}</span></div>
     ${progHTML(i,10)}
@@ -216,13 +322,14 @@ function screenItem(i){
   refresh();
   document.getElementById("follow").oninput=e=>{a.follow=e.target.value;};
   document.getElementById("prev").onclick=()=>screenItem(i-1);
-  document.getElementById("next").onclick=()=>{ a.t1=new Date().toISOString(); if(i<9) screenItem(i+1); else screenSim(); };
+  document.getElementById("next").onclick=()=>{ a.t1=new Date().toISOString(); progress("item",a); if(i<9) screenItem(i+1); else screenSim(); };
 }
 
 /* ---------- 畫面：模擬操作 ---------- */
 function screenSim(){
-  const sim=SIM[S.phase]; const r=S.sim||{clicked:false,blocked:false,deleted:false,verify:false,verifyHow:"",note:""}; S.sim=r;
-  function render(){
+  if(S&&S.where!=="sim") progress("sim");
+  saveCur(); const sim=SIM[S.phase]; const r=S.sim||{clicked:false,blocked:false,deleted:false,verify:false,verifyHow:"",note:""}; S.sim=r;
+  function render(){ saveCur();
     h(`<div class="panel"><span class="pill">模擬操作</span>
     <div class="stage" style="margin-top:10px">
       <div>
@@ -259,6 +366,7 @@ function screenSim(){
 function choiceGroup(key,opts,obj){ return `<div class="row" data-k="${key}">${opts.map(o=>`<button type="button" class="choice ${obj[key]===o?"on":""}" data-v="${esc(o)}" style="font-size:20px;min-height:56px">${esc(o)}</button>`).join("")}</div>`; }
 function bindGroups(obj,onchange){ app.querySelectorAll("[data-k]").forEach(g=>g.querySelectorAll("button").forEach(b=>b.onclick=()=>{obj[g.dataset.k]=b.dataset.v; g.querySelectorAll("button").forEach(x=>x.classList.toggle("on",x===b)); onchange&&onchange();})); }
 function screenSafety(){
+  if(S&&S.where!=="end") progress("end");
   const e=S.extra;
   h(`<div class="panel" style="max-width:860px"><span class="pill">前測結尾 · 安全確認</span>
    <div class="q">「最近有沒有人向您要錢，或要您替他管錢、簽名，讓您覺得不舒服？」</div>${choiceGroup("safe1",["是","否"],e)}
@@ -269,6 +377,7 @@ function screenSafety(){
   document.getElementById("prev").onclick=screenSim; document.getElementById("next").onclick=finish;
 }
 function screenAccept(){
+  if(S&&S.where!=="end") progress("end");
   const e=S.extra; const sat=["非常不滿意","不滿意","普通","滿意","非常滿意"];
   h(`<div class="panel" style="max-width:900px"><span class="pill">後測結尾 · 課程接受度與活動滿意度</span>
    <div class="q">今天教的內容好不好懂？</div>${choiceGroup("acc1",["好懂","還可以","不好懂"],e)}
@@ -287,42 +396,47 @@ function screenAccept(){
   document.getElementById("open").oninput=ev=>{e.open=ev.target.value;};
   document.getElementById("prev").onclick=screenSim; document.getElementById("next").onclick=finish;
 }
-function finish(){
+async function finish(){
   S.end=new Date().toISOString(); S.finished=true;
-  const list=load().filter(r=>!(r.code===S.code&&r.phase===S.phase&&!r.finished)); list.push(S); save(list);
-  const code=S.code, phase=S.phase; S=null; sessPill.hidden=true;
-  h(`<div class="panel" style="max-width:720px"><h2 style="font-size:24px">已完成：${esc(code)} ${phase==="pre"?"前測":"後測"}</h2>
-  <p>資料已存在這台平板。${phase==="pre"?"介入後再次輸入同一個識別碼，會自動進入後測。":"請在活動結束後到「紀錄與匯出」匯出 CSV。"}</p>
+  const rec=S; const list=load().filter(r=>r.rid!==rec.rid); list.push(rec); save(list); clearCur();
+  const code=rec.code, phase=rec.phase, form=rec.form; S=null; sessPill.hidden=true;
+  h(`<div class="panel" style="max-width:720px"><h2 style="font-size:24px">已完成：${esc(code)} ${phase==="pre"?"前測":"後測"}（${form} 卷）</h2><p id="upmsg">${CONFIG.ENDPOINT?"上傳到後台中…":"尚未連接後台，資料已存在這台平板。"}</p></div>`);
+  let ok=false;
+  if(CONFIG.ENDPOINT){ ok=await upload(rec); if(ok){ const l=load(); const x=l.find(r=>r.rid===rec.rid); if(x){x.uploaded=true; save(l);} } }
+  h(`<div class="panel" style="max-width:720px"><h2 style="font-size:24px">已完成：${esc(code)} ${phase==="pre"?"前測":"後測"}（${form} 卷）</h2>
+  ${ok?`<p style="color:var(--ok);font-weight:700">✓ 已上傳到後台。</p>`:CONFIG.ENDPOINT?`<div class="note" style="color:var(--bad)">✕ 上傳失敗（可能網路不穩）。資料已存在這台平板，請到「紀錄與匯出」按「重新上傳」。</div>`:`<p>資料已存在這台平板。</p>`}
+  <p>${phase==="pre"?`介入後再輸入同一個代號 ${esc(code)}，會自動進入後測（${other(form)} 卷）。`:"這位長者的前後測都完成了。"}</p>
   <div class="row"><button class="primary" type="button" id="again">施測下一位</button><button type="button" id="adm">紀錄與匯出</button></div></div>`);
   document.getElementById("again").onclick=()=>screenStart(); document.getElementById("adm").onclick=screenAdmin;
 }
 
-/* ---------- 紀錄與匯出 ---------- */
+/* ---------- 紀錄與匯出（這台平板） ---------- */
 function toCSV(list){
-  const head=["識別碼","階段","卷別","分派","學生","開始","結束","序","題號","真假","把握","照做","追問","模擬_點連結","模擬_封鎖","模擬_刪除","模擬_查證","模擬_查證方式","模擬_備註","安全1","安全2","接受1","接受2","接受3","USR1","USR2","USR3","USR4","USR5","開放意見"];
+  const head=["代號","階段","卷別","分派","開始","結束","序","題號","真假","把握","照做","追問","模擬_點連結","模擬_封鎖","模擬_刪除","模擬_查證","模擬_查證方式","模擬_備註","安全1","安全2","接受1","接受2","接受3","USR1","USR2","USR3","USR4","USR5","開放意見"];
   const rows=[head];
   list.forEach(r=>{ const e=r.extra||{}, s=r.sim||{};
-    (r.answers||[]).forEach((a,i)=>rows.push([r.code,r.phase,r.form,r.assign,r.stu,r.start,r.end||"",a.seq,a.id,a.q1,a.q1c,a.q2,a.follow||"", i===0?(s.clicked?1:0):"", i===0?(s.blocked?1:0):"", i===0?(s.deleted?1:0):"", i===0?(s.verify?1:0):"", i===0?(s.verifyHow||""):"", i===0?(s.note||""):"", i===0?(e.safe1||""):"", i===0?(e.safe2||""):"", i===0?(e.acc1||""):"", i===0?(e.acc2||""):"", i===0?(e.acc3||""):"", i===0?(e.usr1||""):"", i===0?(e.usr2||""):"", i===0?(e.usr3||""):"", i===0?(e.usr4||""):"", i===0?(e.usr5||""):"", i===0?(e.open||""):""])); });
+    (r.answers||[]).forEach((a,i)=>rows.push([r.code,r.phase,r.form,r.assign,r.start,r.end||"",a.seq,a.id,a.q1,a.q1c,a.q2,a.follow||"", i===0?(s.clicked?1:0):"", i===0?(s.blocked?1:0):"", i===0?(s.deleted?1:0):"", i===0?(s.verify?1:0):"", i===0?(s.verifyHow||""):"", i===0?(s.note||""):"", i===0?(e.safe1||""):"", i===0?(e.safe2||""):"", i===0?(e.acc1||""):"", i===0?(e.acc2||""):"", i===0?(e.acc3||""):"", i===0?(e.usr1||""):"", i===0?(e.usr2||""):"", i===0?(e.usr3||""):"", i===0?(e.usr4||""):"", i===0?(e.usr5||""):"", i===0?(e.open||""):""])); });
   return "﻿"+rows.map(r=>r.map(v=>`"${String(v==null?"":v).replace(/"/g,'""').replace(/\n/g," ")}"`).join(",")).join("\r\n");
 }
 function screenAdmin(){
-  const list=load();
-  h(`<div class="panel"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:22px">紀錄與匯出</h2><button type="button" id="back">回施測</button></div>
-   <p class="muted">這台平板共 ${list.length} 筆（每位長者前、後測各一筆）。資料只存在這台裝置，請在活動結束後匯出。</p>
-   <div class="row" style="margin:10px 0"><button class="primary" type="button" id="dl">下載 CSV</button><button type="button" id="cp">複製 CSV 到剪貼簿</button><button type="button" id="clr">清除全部（測試用）</button></div>
+  const list=load(); const pend=list.filter(r=>r.finished&&!r.uploaded).length;
+  h(`<div class="panel"><div class="row" style="justify-content:space-between;align-items:center"><h2 style="font-size:22px">紀錄與匯出（這台平板）</h2><button type="button" id="back">回施測</button></div>
+   <p class="muted">這台平板共 ${list.length} 筆；${CONFIG.ENDPOINT?`尚未上傳 ${pend} 筆。全部資料以老師的 Google 試算表為準，這裡是備份。`:"尚未連接後台，請在活動結束後匯出 CSV。"}</p>
+   <div class="row" style="margin:10px 0">${CONFIG.ENDPOINT?`<button class="primary" type="button" id="up" ${pend?"":"disabled"}>重新上傳未上傳的 ${pend} 筆</button>`:""}<button type="button" id="dl">下載 CSV</button><button type="button" id="cp">複製 CSV</button><button type="button" id="clr">清除這台平板的紀錄</button></div>
    <div id="msg" class="muted"></div>
-   <div class="scroll"><table class="tbl"><thead><tr><th>識別碼</th><th>階段</th><th>卷</th><th>學生</th><th>開始</th><th>用時</th><th>題數</th><th></th></tr></thead><tbody>
-   ${list.map((r,i)=>`<tr><td>${esc(r.code)}</td><td>${r.phase==="pre"?"前測":"後測"}</td><td>${esc(r.form)}</td><td>${esc(r.stu)}</td><td>${esc((r.start||"").slice(5,16).replace("T"," "))}</td><td>${r.end?Math.round((new Date(r.end)-new Date(r.start))/60000)+" 分":"未完成"}</td><td>${(r.answers||[]).length}</td><td><button type="button" data-del="${i}" style="min-height:36px;font-size:14px;padding:4px 10px">刪除</button></td></tr>`).join("")||`<tr><td colspan="8" class="muted">尚無紀錄</td></tr>`}
+   <div class="scroll"><table class="tbl"><thead><tr><th>代號</th><th>階段</th><th>卷</th><th>開始</th><th>用時</th><th>上傳</th></tr></thead><tbody>
+   ${list.map(r=>`<tr><td>${esc(r.code)}</td><td>${r.phase==="pre"?"前測":"後測"}</td><td>${esc(r.form)}</td><td>${esc((r.start||"").slice(5,16).replace("T"," "))}</td><td>${r.end?Math.round((new Date(r.end)-new Date(r.start))/60000)+" 分":"未完成"}</td><td>${r.uploaded?"✓":"未上傳"}</td></tr>`).join("")||`<tr><td colspan="6" class="muted">尚無紀錄</td></tr>`}
    </tbody></table></div>
-   <textarea id="csvbox" style="margin-top:12px;min-height:120px;font-size:13px" readonly>${esc(toCSV(list))}</textarea>
-   <p class="kbd">下載若被瀏覽器擋住（例如在 Claude 預覽中），改用「複製」或直接全選上方文字框。放到 GitHub Pages 後下載可正常使用。</p></div>`);
+   <textarea id="csvbox" style="margin-top:12px;min-height:120px;font-size:13px" readonly>${esc(toCSV(list))}</textarea></div>`);
   const msg=document.getElementById("msg");
   document.getElementById("back").onclick=()=>S?screenItem(S.step||0):screenStart();
+  const up=document.getElementById("up");
+  if(up) up.onclick=async()=>{ up.disabled=true; msg.textContent="上傳中…"; const n=await retryPending(); const left=load().filter(r=>r.finished&&!r.uploaded).length; screenAdmin(); document.getElementById("msg").textContent=`已上傳 ${n} 筆${left?`；仍有 ${left} 筆失敗，請確認網路後再試。`:"。"}`; };
   document.getElementById("dl").onclick=()=>{ try{ const blob=new Blob([toCSV(list)],{type:"text/csv;charset=utf-8"}); const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download=`hub1204_${new Date().toISOString().slice(0,10)}.csv`; document.body.appendChild(a); a.click(); a.remove(); msg.textContent="已嘗試下載；若沒有反應請改用複製。"; }catch(e){ msg.textContent="這個環境不允許下載，請改用複製。"; } };
-  document.getElementById("cp").onclick=()=>{ const t=toCSV(list); navigator.clipboard.writeText(t).then(()=>msg.textContent="已複製。").catch(()=>{ const b=document.getElementById("csvbox"); b.focus(); b.select(); msg.textContent="無法自動複製，已幫您全選文字框，請手動複製。"; }); };
-  let armed=false; document.getElementById("clr").onclick=e=>{ if(!armed){armed=true;e.target.textContent="再按一次確認清除";return;} save([]); screenAdmin(); };
-  app.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{ const l=load(); l.splice(+b.dataset.del,1); save(l); screenAdmin(); });
+  document.getElementById("cp").onclick=()=>{ const t=toCSV(list); navigator.clipboard.writeText(t).then(()=>msg.textContent="已複製。").catch(()=>{ const b=document.getElementById("csvbox"); b.focus(); b.select(); msg.textContent="無法自動複製，已全選文字框，請手動複製。"; }); };
+  let armed=false; document.getElementById("clr").onclick=e=>{ if(pend&&!armed){ msg.textContent=`還有 ${pend} 筆沒上傳，清除會遺失。`; } if(!armed){armed=true;e.target.textContent="再按一次確認清除";return;} save([]); screenAdmin(); };
 }
+
 document.getElementById("btnAdmin").onclick=screenAdmin;
 screenStart();
 })();
