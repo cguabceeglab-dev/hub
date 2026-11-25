@@ -67,6 +67,14 @@ textarea{min-height:90px}
 .phone .menu{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 .phone .menu button{font-size:15px;min-height:40px;padding:6px 12px;border-radius:8px;background:rgba(255,255,255,.12);color:var(--phone-fg);border-color:transparent}
 .phone .menu button.on{background:#D64545}
+.phone .webbar{display:flex;align-items:center;gap:8px;padding:6px 8px;background:#F1F3F4;border-radius:10px;margin:0 4px 8px}
+.phone .webback{font-size:16px;min-height:40px;padding:4px 12px;border-radius:8px;background:#fff;color:#1a73e8;border:1px solid #DADCE0;font-weight:700}
+.phone .url{font-size:12px;color:#555;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.phone .webpage{padding:8px 10px 4px;font-size:15px;line-height:1.5}
+.phone .webtitle{font-size:19px;font-weight:700;margin-bottom:6px}
+.phone .wl{display:block;font-size:13px;color:#444;margin:8px 0 3px}
+.phone .wi{font-size:15px;padding:8px;border:1px solid #CCC;border-radius:6px;background:#fff;color:#111}
+.phone .wbtn{margin-top:14px;background:#D64545;color:#fff;text-align:center;border-radius:8px;padding:10px;font-weight:700}
 .phone .warnpage{background:#fff;color:#111;border-radius:10px;padding:12px;font-size:14px}
 .tbl{width:100%;border-collapse:collapse;font-size:14px}
 .tbl th,.tbl td{border-bottom:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
@@ -112,8 +120,10 @@ const ITEMS={
  B10:{t:"多年不見的老同學透過您兒子問到您的電話，打來約您下週在老家附近的廟口喝茶敘舊。他說就是聊聊天，不用帶什麼東西，也沒有別的事要拜託您；您兒子確認是他本人。",q3:"您會赴約嗎？",card:{k:"call",name:"09xx-xxx-xxx",sub:"行動電話"}},
 };
 const SIM={
- pre:{from:"宅配通知",text:"【宅配】您的包裹地址有誤，無法配送，請於今日點選連結更新資料：",link:"http://tw-delivery-update.xyz/a8k2"},
- post:{from:"台電繳費",text:"【台電】您的電費逾期未繳，今日將停電，請立即點選連結繳費：",link:"http://taipower-pay-now.top/9f1c"}
+ pre:{from:"宅配通知",text:"【宅配】您的包裹地址有誤，無法配送，請於今日點選連結更新資料：",link:"http://tw-delivery-update.xyz/a8k2",
+      webTitle:"📦 包裹配送資料更新",webText:"您的包裹因地址錯誤暫停配送，請填寫以下資料，並支付重新配送費 25 元。",webBtn:"確認送出"},
+ post:{from:"台電繳費",text:"【台電】您的電費逾期未繳，今日將停電，請立即點選連結繳費：",link:"http://taipower-pay-now.top/9f1c",
+      webTitle:"⚡ 電費逾期線上繳費",webText:"您的電費已逾期，今日 17:00 前未繳清將停止供電。請填寫以下資料完成繳費。",webBtn:"立即繳費"}
 };
 /* ==========================================================
    後台設定：部署 Google Apps Script 後，把網址貼在 ENDPOINT。
@@ -174,7 +184,7 @@ function progress(stage,answer){
 function resumeCur(){
   const c=loadCur(); if(!c) return; S=c;
   sessPill.textContent=`${S.code} · ${S.phase==="pre"?"前測":"後測"} · ${S.form} 卷`; sessPill.hidden=false;
-  if(S.where==="sim") screenSim(); else if(S.where==="end") (S.phase==="pre"?screenSafety():screenAccept());
+  if(S.where==="sim") screenSim(); else if(S.where==="simrec") screenSimRecord(); else if(S.where==="end") (S.phase==="pre"?screenSafety():screenAccept());
   else if(S.where==="intro") screenIntro(); else screenItem(Math.min(S.step||0,9));
 }
 
@@ -210,7 +220,7 @@ function screenStart(msg){
     <p class="muted">輸入長者代號。網頁會自動判斷這次是前測還是後測，並跳出對應的卷：前測做 A 卷的人，後測自動是 B 卷；前測做 B 卷的人，後測自動是 A 卷。</p>
     ${msg?`<div class="note" style="margin:10px 0">${esc(msg)}</div>`:""}
     ${!CONFIG.ENDPOINT?`<div class="note" style="margin:10px 0">⚠ 尚未連接後台：資料只會存在這台平板。</div>`:""}
-    ${(()=>{const c=loadCur(); return c?`<div class="note" style="margin:10px 0;border:2px solid var(--warm)"><b>這台平板有一筆沒做完：${esc(c.code)} ${c.phase==="pre"?"前測":"後測"}（${esc(c.form)} 卷，${c.where==="sim"?"做到模擬操作":c.where==="end"?"做到結尾題":"做到第 "+((c.step||0)+1)+" 題"}）</b><div class="row" style="margin-top:8px"><button class="primary" type="button" id="resume">繼續做完</button><button type="button" id="drop">放棄這筆</button></div></div>`:"";})()}
+    ${(()=>{const c=loadCur(); return c?`<div class="note" style="margin:10px 0;border:2px solid var(--warm)"><b>這台平板有一筆沒做完：${esc(c.code)} ${c.phase==="pre"?"前測":"後測"}（${esc(c.form)} 卷，${c.where==="sim"?"做到模擬操作":c.where==="simrec"?"做到模擬操作的學生紀錄":c.where==="end"?"做到結尾題":"做到第 "+((c.step||0)+1)+" 題"}）</b><div class="row" style="margin-top:8px"><button class="primary" type="button" id="resume">繼續做完</button><button type="button" id="drop">放棄這筆</button></div></div>`:"";})()}
     ${pend?`<div class="note" style="margin:10px 0">這台平板有 ${pend} 筆尚未上傳，請到「紀錄與匯出」按「重新上傳」。</div>`:""}
     <div style="margin-top:12px;max-width:360px"><label for="code">長者代號</label><input id="code" placeholder="例如 H03" autocapitalize="characters" autocomplete="off" style="font-size:28px"></div>
     <div class="foot"><span class="kbd">下一步會先顯示卷別，確認後才開始。</span><button class="primary" id="go" type="button">下一步</button></div>
@@ -325,38 +335,61 @@ function screenItem(i){
   document.getElementById("next").onclick=()=>{ a.t1=new Date().toISOString(); progress("item",a); if(i<9) screenItem(i+1); else screenSim(); };
 }
 
-/* ---------- 畫面：模擬操作 ---------- */
+/* ---------- 畫面：模擬操作（第 1 頁：長者自己操作手機畫面） ---------- */
+function simRec(){ if(!S.sim) S.sim={clicked:false,blocked:false,deleted:false,verify:false,verifyHow:"",note:""}; return S.sim; }
 function screenSim(){
-  if(S&&S.where!=="sim") progress("sim");
-  saveCur(); const sim=SIM[S.phase]; const r=S.sim||{clicked:false,blocked:false,deleted:false,verify:false,verifyHow:"",note:""}; S.sim=r;
+  if(S&&S.where!=="sim"&&S.where!=="simrec") progress("sim");
+  S.where="sim"; saveCur(); const sim=SIM[S.phase]; const r=simRec();
+  let view="msg"; // msg＝簡訊畫面；web＝點連結後的假網頁
   function render(){ saveCur();
-    h(`<div class="panel"><span class="pill">模擬操作</span>
-    <div class="stage" style="margin-top:10px">
-      <div>
-        <div class="phone"><div class="bar"><span>09:41</span><span>▂▄▆ 4G</span></div><div class="hd"><div class="ic">✉</div>${esc(sim.from)}</div>
-        <div class="body"><div class="bub">${esc(sim.text)}<br><span class="link" id="simLink">${esc(sim.link)}</span></div>
-        ${r.clicked?`<div class="warnpage">⚠ 已點開連結：頁面要求輸入姓名、身分證字號與銀行帳號。（模擬，無實際頁面）</div>`:""}
+    const phoneMsg=`<div class="phone"><div class="bar"><span>09:41</span><span>▂▄▆ 4G</span></div><div class="hd"><div class="ic">✉</div>${esc(sim.from)}</div>
+        <div class="body">${r.deleted?`<div class="sub" style="text-align:center;margin-top:40px">（訊息已刪除）</div>`:`<div class="bub">${esc(sim.text)}<br><span class="link" id="simLink" role="link" tabindex="0" style="cursor:pointer">${esc(sim.link)}</span></div>`}
         <div class="menu"><button type="button" id="bBlock" class="${r.blocked?"on":""}">${r.blocked?"已封鎖此號碼":"封鎖此號碼"}</button><button type="button" id="bDel" class="${r.deleted?"on":""}">${r.deleted?"已刪除訊息":"刪除訊息"}</button></div>
-        </div></div>
-      </div>
-      <div>
-        <p class="scen" style="font-size:22px">「現在請您做給我看，如果您的手機收到這一則，您會怎麼處理？」</p>
-        <div class="note">把平板交給長者自己操作。不提示。長者說「不知道」就不要引導。</div>
-        <div class="q">學生記錄</div>
-        <div class="row"><button type="button" class="choice ${r.verify?"on":""}" id="bVer">長者說出或做出一種查證方式</button></div>
-        <label for="how" style="margin-top:10px">查證方式（打 165／問家人／打帳單上或官方電話／親自去…）</label><input id="how" value="${esc(r.verifyHow)}">
-        <label for="snote" style="margin-top:10px">備註（長者說了什麼、卡在哪）</label><textarea id="snote">${esc(r.note)}</textarea>
-        <div class="muted" style="margin-top:8px">自動記錄：${r.clicked?"有點連結":"沒點連結"}；${r.blocked?"已封鎖":"未封鎖"}；${r.deleted?"已刪除":"未刪除"}</div>
-      </div>
-    </div>
-    <div class="foot"><button type="button" id="prev">回上一題</button><button class="primary" type="button" id="next">完成模擬操作</button></div></div>`);
-    document.getElementById("simLink").onclick=()=>{r.clicked=true;render();};
-    document.getElementById("bBlock").onclick=()=>{r.blocked=!r.blocked;render();};
-    document.getElementById("bDel").onclick=()=>{r.deleted=!r.deleted;render();};
-    document.getElementById("bVer").onclick=()=>{r.verify=!r.verify;render();};
-    document.getElementById("how").oninput=e=>{r.verifyHow=e.target.value;};
-    document.getElementById("snote").oninput=e=>{r.note=e.target.value;};
+        </div></div>`;
+    const phoneWeb=`<div class="phone" style="background:#fff;color:#111"><div class="bar" style="color:#111"><span>09:41</span><span>▂▄▆ 4G</span></div>
+        <div class="webbar"><button type="button" id="webBack" class="webback">‹ 返回</button><span class="url">${esc(sim.link.replace(/^https?:\/\//,""))}</span></div>
+        <div class="webpage">
+          <div class="webtitle">${esc(sim.webTitle)}</div>
+          <p style="margin:0 0 10px">${esc(sim.webText)}</p>
+          <label class="wl">姓名</label><input class="wi" readonly placeholder="請輸入姓名">
+          <label class="wl">身分證字號</label><input class="wi" readonly placeholder="請輸入身分證字號">
+          <label class="wl">銀行帳號</label><input class="wi" readonly placeholder="請輸入銀行帳號">
+          <div class="wbtn">${esc(sim.webBtn)}</div>
+          <div class="cap" style="margin-top:10px;color:#666">（模擬畫面，不會送出任何資料）</div>
+        </div></div>`;
+    h(`<div class="panel"><div class="row" style="justify-content:space-between;align-items:center"><span class="pill">模擬操作 · 第 1 步：長者操作</span><span class="muted">（第 2 步是學生紀錄）</span></div>
+    <p class="scen" style="font-size:22px;margin:12px 0 6px">「現在請您做給我看，如果您的手機收到這一則，您會怎麼處理？」</p>
+    <div class="note">把平板交給長者自己操作。不提示。長者說「不知道」就不要引導。長者操作完，學生拿回平板按「完成模擬操作」。</div>
+    <div style="max-width:420px;margin:16px auto 0">${view==="web"?phoneWeb:phoneMsg}</div>
+    <div class="foot"><button type="button" id="prev">回上一題</button><button class="primary" type="button" id="next">完成模擬操作，進入學生紀錄</button></div></div>`);
+    if(view==="web"){
+      document.getElementById("webBack").onclick=()=>{view="msg";render();};
+    }else{
+      const lk=document.getElementById("simLink"); if(lk){ lk.onclick=()=>{r.clicked=true;view="web";render();}; lk.onkeydown=e=>{ if(e.key==="Enter") lk.onclick(); }; }
+      document.getElementById("bBlock").onclick=()=>{r.blocked=!r.blocked;render();};
+      document.getElementById("bDel").onclick=()=>{r.deleted=!r.deleted;render();};
+    }
     document.getElementById("prev").onclick=()=>screenItem(9);
+    document.getElementById("next").onclick=screenSimRecord;
+  }
+  render();
+}
+
+/* ---------- 畫面：模擬操作（第 2 頁：學生紀錄） ---------- */
+function screenSimRecord(){
+  S.where="simrec"; saveCur(); const r=simRec();
+  function render(){ saveCur();
+    h(`<div class="panel" style="max-width:860px"><span class="pill">模擬操作 · 第 2 步：學生紀錄</span>
+    <div class="note" style="margin-top:12px">自動記錄：<b>${r.clicked?"有點連結":"沒點連結"}</b>；<b>${r.blocked?"已封鎖":"未封鎖"}</b>；<b>${r.deleted?"已刪除":"未刪除"}</b></div>
+    <div class="q">長者有沒有說出或做出查證方式？</div>
+    <div class="row"><button type="button" class="choice ${r.verify?"on":""}" id="bVer">長者說出或做出一種查證方式</button></div>
+    <label for="how" style="margin-top:10px">查證方式（打 165／問家人／打帳單上或官方電話／親自去…）</label><input id="how" value="${esc(r.verifyHow)}">
+    <label for="snote" style="margin-top:10px">備註（長者說了什麼、卡在哪）</label><textarea id="snote">${esc(r.note)}</textarea>
+    <div class="foot"><button type="button" id="prev">回模擬操作</button><button class="primary" type="button" id="next">完成紀錄，下一步</button></div></div>`);
+    document.getElementById("bVer").onclick=()=>{r.verify=!r.verify;render();};
+    document.getElementById("how").oninput=e=>{r.verifyHow=e.target.value;saveCur();};
+    document.getElementById("snote").oninput=e=>{r.note=e.target.value;saveCur();};
+    document.getElementById("prev").onclick=screenSim;
     document.getElementById("next").onclick=()=> S.phase==="pre"?screenSafety():screenAccept();
   }
   render();
@@ -372,9 +405,9 @@ function screenSafety(){
    <div class="q">「最近有沒有人向您要錢，或要您替他管錢、簽名，讓您覺得不舒服？」</div>${choiceGroup("safe1",["是","否"],e)}
    <div class="q">「您覺得自己的錢現在安全嗎？」</div>${choiceGroup("safe2",["安全","不太安全","不安全"],e)}
    <div class="note" style="margin-top:14px">任一題有疑慮：施測照常完成，結束後私下告訴教師或社工，不在長者面前討論。</div>
-   <div class="foot"><button type="button" id="prev">回模擬操作</button><button class="primary" type="button" id="next" disabled>完成前測</button></div></div>`);
+   <div class="foot"><button type="button" id="prev">回學生紀錄</button><button class="primary" type="button" id="next" disabled>完成前測</button></div></div>`);
   const chk=()=>{document.getElementById("next").disabled=!(e.safe1&&e.safe2);}; bindGroups(e,chk); chk();
-  document.getElementById("prev").onclick=screenSim; document.getElementById("next").onclick=finish;
+  document.getElementById("prev").onclick=screenSimRecord; document.getElementById("next").onclick=finish;
 }
 function screenAccept(){
   if(S&&S.where!=="end") progress("end");
@@ -390,11 +423,11 @@ function screenAccept(){
    <div class="q">4. 場地和設備合適嗎？</div>${choiceGroup("usr4",sat,e)}
    <div class="q">5. 以後有類似活動，您願意再來嗎？</div>${choiceGroup("usr5",sat,e)}
    <div class="q">「今天有什麼地方可以做得更好？」<small>學生記錄原話</small></div><textarea id="open">${esc(e.open||"")}</textarea>
-   <div class="foot"><button type="button" id="prev">回模擬操作</button><button class="primary" type="button" id="next" disabled>完成後測</button></div></div>`);
+   <div class="foot"><button type="button" id="prev">回學生紀錄</button><button class="primary" type="button" id="next" disabled>完成後測</button></div></div>`);
   const need=["acc1","acc2","acc3","usr1","usr2","usr3","usr4","usr5"];
   const chk=()=>{document.getElementById("next").disabled=!need.every(k=>e[k]);}; bindGroups(e,chk); chk();
   document.getElementById("open").oninput=ev=>{e.open=ev.target.value;};
-  document.getElementById("prev").onclick=screenSim; document.getElementById("next").onclick=finish;
+  document.getElementById("prev").onclick=screenSimRecord; document.getElementById("next").onclick=finish;
 }
 async function finish(){
   S.end=new Date().toISOString(); S.finished=true;
