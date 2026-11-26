@@ -233,7 +233,7 @@ function screenStart(msg){
   const rs=document.getElementById("resume"); if(rs) rs.onclick=resumeCur;
   const dp=document.getElementById("drop"); if(dp){ let armed=false; dp.onclick=()=>{ if(!armed){armed=true;dp.textContent="再按一次確認放棄";return;} clearCur(); screenStart(); }; }
   const run=async()=>{
-    const stu=""; const code=document.getElementById("code").value.trim().toUpperCase().replace(/\s+/g,"");
+    const stu=""; const code=document.getElementById("code").value.normalize("NFKC").trim().toUpperCase().replace(/\s+/g,"");  // NFKC：全形Ｈ０３→半形H03
     if(!code){ screenStart("請輸入長者代號。"); return; }
     go.disabled=true; go.textContent= CONFIG.ENDPOINT?"查詢後台中…":"判斷中…";
     const res=await resolveCode(code);
