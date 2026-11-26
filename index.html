@@ -26,6 +26,8 @@ button.primary{background:var(--accent);color:var(--accent-ink);border-color:var
 button.ghost{background:transparent}
 button.choice{font-size:24px;font-weight:500;padding:18px 20px;min-height:68px;flex:1 1 140px}
 button.choice.on{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.choice.skip{flex:0 1 120px;font-size:18px;color:var(--muted)}
+button.choice.skip.on{background:var(--muted);color:var(--panel);border-color:var(--muted)}
 button:disabled{opacity:.45;cursor:not-allowed}
 .row{display:flex;gap:12px;flex-wrap:wrap}
 .panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px}
@@ -316,23 +318,32 @@ function screenItem(i){
       <div>
         <p class="scen">${esc(it.t)}</p>
         <div class="q">一、您覺得這件事是真的，還是騙人的？</div>
-        <div class="row" data-g="q1"><button type="button" class="choice" data-v="真的">真的</button><button type="button" class="choice" data-v="騙人的">騙人的</button><button type="button" class="choice" data-v="未作答" style="flex:0 1 120px;font-size:17px">未作答</button></div>
-        <div class="q">　　您有多確定？</div>
-        <div class="row" data-g="q1c"><button type="button" class="choice" data-v="很確定">很確定</button><button type="button" class="choice" data-v="有點確定">有點確定</button><button type="button" class="choice" data-v="不太確定">不太確定</button></div>
+        <div class="row" data-g="q1"><button type="button" class="choice" data-v="真的">真的</button><button type="button" class="choice" data-v="騙人的">騙人的</button><button type="button" class="choice skip" data-v="未作答">未作答</button></div>
+        <div id="q1cBox"><div class="q">　　您有多確定？</div>
+        <div class="row" data-g="q1c"><button type="button" class="choice" data-v="很確定">很確定</button><button type="button" class="choice" data-v="有點確定">有點確定</button><button type="button" class="choice" data-v="不太確定">不太確定</button></div></div>
         <div class="q">二、${esc(it.q3||"如果是您，您會照著做嗎？")}</div>
-        <div class="row" data-g="q2"><button type="button" class="choice" data-v="一定會">一定會</button><button type="button" class="choice" data-v="可能會">可能會</button><button type="button" class="choice" data-v="可能不會">可能不會</button><button type="button" class="choice" data-v="一定不會">一定不會</button></div>
-        <div class="q">追問<small>「那您接下來會怎麼做？」寫長者原話，不改寫。前後測都要問；前測因超時沒問的話，後測也不問。</small></div>
-        <textarea id="follow" placeholder="長者原話">${esc(a.follow)}</textarea>
+        <div class="row" data-g="q2"><button type="button" class="choice" data-v="一定會">一定會</button><button type="button" class="choice" data-v="可能會">可能會</button><button type="button" class="choice" data-v="可能不會">可能不會</button><button type="button" class="choice" data-v="一定不會">一定不會</button><button type="button" class="choice skip" data-v="未作答">未作答</button></div>
+        <div id="whyBox"><div class="q">未作答原因<small>簡單記錄即可，例如：聽不懂題目／說不知道／不想回答</small></div>
+        <textarea id="why" placeholder="長者未作答的原因" style="min-height:70px">${esc(a.follow||"")}</textarea></div>
       </div>
     </div>
-    <div class="foot"><button type="button" id="prev" ${i===0?"disabled":""}>上一題</button><span class="muted" id="hint">三個答案都點了才能下一題（長者再問一次仍不答，點「未作答」，不要替他選）</span><button class="primary" type="button" id="next" disabled>${i===9?"完成情境題":"下一題"}</button></div>
+    <div class="foot"><button type="button" id="prev" ${i===0?"disabled":""}>上一題</button><span class="muted" id="hint"></span><button class="primary" type="button" id="next" disabled>${i===9?"完成情境題":"下一題"}</button></div>
   </div>`);
   const groups=app.querySelectorAll("[data-g]");
+  const q1cBox=document.getElementById("q1cBox"), whyBox=document.getElementById("whyBox"), why=document.getElementById("why");
+  // 第一題選「未作答」→ 不出現「有多確定」；任何一題選「未作答」→ 出現「未作答原因」（必填）
   function refresh(){ groups.forEach(g=>{ const key=g.dataset.g; g.querySelectorAll("button").forEach(b=>b.classList.toggle("on",b.dataset.v===a[key])); });
-    const ok=a.q1&&(a.q1==="未作答"||a.q1c)&&a.q2; document.getElementById("next").disabled=!ok; document.getElementById("hint").textContent= ok?"":"三個答案都點了才能下一題"; }
-  groups.forEach(g=>g.querySelectorAll("button").forEach(b=>b.onclick=()=>{ a[g.dataset.g]=b.dataset.v; refresh(); }));
+    const skip1=a.q1==="未作答", anySkip=skip1||a.q2==="未作答";
+    q1cBox.hidden=skip1; whyBox.hidden=!anySkip;
+    const miss=[]; if(!a.q1) miss.push("真假"); if(a.q1&&!skip1&&!a.q1c) miss.push("確定程度"); if(!a.q2) miss.push("會不會照做"); if(anySkip&&!(a.follow||"").trim()) miss.push("未作答原因");
+    document.getElementById("next").disabled=miss.length>0; document.getElementById("hint").textContent= miss.length?"還沒填：" + miss.join("、"):""; }
+  groups.forEach(g=>g.querySelectorAll("button").forEach(b=>b.onclick=()=>{
+    a[g.dataset.g]=b.dataset.v;
+    if(a.q1==="未作答") a.q1c="";                                  // 沒判斷真假，就沒有確定程度
+    if(a.q1!=="未作答"&&a.q2!=="未作答"){ a.follow=""; why.value=""; } // 都有回答 → 清掉原因
+    refresh(); }));
+  why.oninput=e=>{ a.follow=e.target.value; refresh(); };
   refresh();
-  document.getElementById("follow").oninput=e=>{a.follow=e.target.value;};
   document.getElementById("prev").onclick=()=>screenItem(i-1);
   document.getElementById("next").onclick=()=>{ a.t1=new Date().toISOString(); progress("item",a); if(i<9) screenItem(i+1); else screenSim(); };
 }
@@ -481,7 +492,7 @@ async function finish(){
 
 /* ---------- 紀錄與匯出（這台平板） ---------- */
 function toCSV(list){
-  const head=["代號","階段","卷別","分派","開始","結束","序","題號","真假","把握","照做","追問","模擬_點連結","模擬_有輸入","模擬_有送出","模擬_封鎖","模擬_刪除","模擬_查證","模擬_查證方式","模擬_備註","安全1","安全2","接受1","接受2","接受3","USR1","USR2","USR3","USR4","USR5","開放意見"];
+  const head=["代號","階段","卷別","分派","開始","結束","序","題號","真假","把握","照做","未作答原因","模擬_點連結","模擬_有輸入","模擬_有送出","模擬_封鎖","模擬_刪除","模擬_查證","模擬_查證方式","模擬_備註","安全1","安全2","接受1","接受2","接受3","USR1","USR2","USR3","USR4","USR5","開放意見"];
   const rows=[head];
   list.forEach(r=>{ const e=r.extra||{}, s=r.sim||{};
     (r.answers||[]).forEach((a,i)=>rows.push([r.code,r.phase,r.form,r.assign,r.start,r.end||"",a.seq,a.id,a.q1,a.q1c,a.q2,a.follow||"", i===0?(s.clicked?1:0):"", i===0?(s.typed?1:0):"", i===0?(s.submitted?1:0):"", i===0?(s.blocked?1:0):"", i===0?(s.deleted?1:0):"", i===0?(s.verify?1:0):"", i===0?(s.verifyHow||""):"", i===0?(s.note||""):"", i===0?(e.safe1||""):"", i===0?(e.safe2||""):"", i===0?(e.acc1||""):"", i===0?(e.acc2||""):"", i===0?(e.acc3||""):"", i===0?(e.usr1||""):"", i===0?(e.usr2||""):"", i===0?(e.usr3||""):"", i===0?(e.usr4||""):"", i===0?(e.usr5||""):"", i===0?(e.open||""):""])); });
